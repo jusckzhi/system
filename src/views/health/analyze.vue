@@ -1,5 +1,5 @@
 <!--
-  name : 用户查询
+  name : 健康信息科普分析
   user : jusck
 -->
 <template>
@@ -27,4 +27,3 @@ export default {
 };
 </script>
 <style scoped lang='stylus'></style>
-

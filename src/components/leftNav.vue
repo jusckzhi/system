@@ -1,15 +1,45 @@
 <template>
   <div class="con">
-    <div class="items" v-for="(item,index) in Menulist" :key="item.title">
-      <h3 @click.self="open(index)">
-        <span :class="item.icon"></span>
-        {{item.title}}
-        <span :class="item.arrows"></span>
-      </h3>
+    <div class="shade" v-show="shade">
+      <div class="menus">
+        <span class="iconfont icon-caidan" @click="close"></span>
+      </div>
+      <div class="items" v-for="(item,index) in Menulist" :key="item.title">
+        <h3 @click.self="open(index)">
+          <span :class="item.icon" @click.self="open(index)"></span>
+          {{item.title}}
+          <span :class="item.arrows" @click.self="open(index)"></span>
+        </h3>
 
-      <ul v-show="item.isOpen">
-        <li is="router-link" v-for=" it in item.child" :key="it.nav" to>{{it.nav}}</li>
-      </ul>
+        <ul v-show="item.isOpen">
+          <li
+            is="router-link"
+            v-for=" it in item.child"
+            :key="it.nav"
+            :to="it.link"
+            activeClass="select"
+          >{{it.nav}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="isshade" v-show="!shade">
+      <div class="menus">
+        <span class="iconfont icon-caidan" @click="unfold"></span>
+      </div>
+      <div class="menusicon" v-for="item in Menulist" :key="item.title">
+        <h3>
+          <span :class="item.icon"></span>
+        </h3>
+        <ul>
+          <li
+            is="router-link"
+            v-for=" it in item.child"
+            :key="it.nav"
+            :to="it.link"
+            activeClass="select"
+          >{{it.nav}}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -19,29 +49,29 @@ export default {
     return {
       Menulist: [
         {
-          icon: "iconfont icon-user",
+          icon: "iconfont icon-yonghu",
           title: "用户管理系统",
           isOpen: false,
-          arrows: "iconfont icon-z-arrowUp1 arrows",
+          arrows: "iconfont icon-jiantouxia arrows",
           child: [
             {
-              link: "",
+              link: "userquery",
               nav: "用户查询",
             },
             {
-              link: "",
+              link: "userstatistics",
               nav: "用户统计",
             },
             {
-              link: "",
+              link: "healthfile",
               nav: "健康档案查询",
             },
             {
-              link: "",
+              link: "healthplan",
               nav: "健康计划管理",
             },
             {
-              link: "",
+              link: "healthinquiry",
               nav: "健康咨询管理",
             },
           ],
@@ -50,46 +80,46 @@ export default {
           icon: "iconfont icon-qudao",
           title: "渠道管理系统",
           isOpen: false,
-          arrows: "iconfont icon-z-arrowUp1 arrows",
+          arrows: "iconfont icon-jiantouxia arrows",
           child: [
             {
-              link: "",
+              link: "channelmanager",
               nav: "渠道信息维护",
             },
             {
-              link: "",
+              link: "channeluser",
               nav: "渠道用户统计",
             },
             {
-              link: "",
+              link: "channelcommission",
               nav: "渠道佣金结算",
             },
             {
-              link: "",
+              link: "channelorder",
               nav: "渠道订单管理",
             },
           ],
         },
         {
-          icon: "iconfont icon-shequfuwuzhan",
+          icon: "iconfont icon-zonghefuwuzhan",
           title: "服务站管理系统",
           isOpen: false,
-          arrows: "iconfont icon-z-arrowUp1 arrows",
+          arrows: "iconfont icon-jiantouxia arrows",
           child: [
             {
-              link: "",
+              link: "servicefees",
               nav: "服务站信息维护",
             },
             {
-              link: "",
+              link: "serviceorder",
               nav: "服务站用户统计",
             },
             {
-              link: "",
+              link: "serviceinformation",
               nav: "服务站佣金结算",
             },
             {
-              link: "",
+              link: "ServiceUser",
               nav: "服务站订单管理",
             },
           ],
@@ -98,14 +128,14 @@ export default {
           icon: "iconfont icon-yixuekepu",
           title: "健康科普管理系统",
           isOpen: false,
-          arrows: "iconfont icon-z-arrowUp1 arrows",
+          arrows: "iconfont icon-jiantouxia arrows",
           child: [
             {
-              link: "",
+              link: "maintain",
               nav: "科普信息维护",
             },
             {
-              link: "",
+              link: "analyze",
               nav: "科普信息分析",
             },
           ],
@@ -114,63 +144,74 @@ export default {
           icon: "iconfont icon-caozuo",
           title: "操作员管理系统",
           isOpen: false,
-          arrows: "iconfont icon-z-arrowUp1 arrows",
+          arrows: "iconfont icon-jiantouxia arrows",
           child: [
             {
-              link: "",
+              link: "role",
               nav: "角色管理",
             },
             {
-              link: "",
+              link: "platform",
               nav: "平台操作员管理",
             },
             {
-              link: "",
+              link: "channel",
               nav: "渠道操作员管理",
             },
             {
-              link: "",
+              link: "service",
               nav: "服务站操作员管理",
             },
           ],
         },
         {
-          icon: "iconfont icon-ziyuan",
+          icon: "iconfont icon-xitong",
           title: "系统参数管理系统",
           isOpen: false,
-          arrows: "iconfont icon-z-arrowUp1 arrows",
+          arrows: "iconfont icon-jiantouxia arrows",
           child: [
             {
-              link: "",
+              link: "menus",
               nav: "菜单管理",
             },
             {
-              link: "",
-              nav: "数字字典维护",
+              link: "datadictionary",
+              nav: "数据字典维护",
             },
             {
-              link: "",
+              link: "control",
               nav: "控制参数维护",
             },
           ],
         },
       ],
-      //   isOpen: false,
+      shade: true,
     };
   },
   methods: {
+    // 展开收起左侧菜单列表
     open(index) {
       if (this.Menulist[index].isOpen) {
         this.Menulist[index].isOpen = false;
-        this.Menulist[index].arrows = "iconfont icon-z-arrowUp1 arrows";
+        this.Menulist[index].arrows = "iconfont icon-jiantouxia arrows";
       } else {
         this.Menulist.forEach((item) => {
           item.isOpen = false;
-          item.arrows = "iconfont icon-z-arrowUp1 arrows";
+          item.arrows = "iconfont icon-jiantouxia arrows";
         });
         this.Menulist[index].isOpen = true;
-        this.Menulist[index].arrows = "iconfont icon-z-arrowUp arrows";
+        this.Menulist[index].arrows = "iconfont icon-dropUp arrows";
       }
+    },
+    // 展开菜单
+    unfold() {
+      this.shade = true;
+      this.$emit("changeStyle");
+    },
+    // 关闭菜单
+    close() {
+      this.shade = false;
+      this.$emit("changeStyleClose");
     },
   },
 };
@@ -178,6 +219,18 @@ export default {
 
 <style lang="stylus">
 .con
+  .menus
+    width 50px
+    height 50px
+    position absolute
+    bottom 0
+    left 0
+    text-align center
+    line-height 50px
+    cursor pointer
+    span
+      font-size 20px
+      font-weight bold
   .items
     h3
       position relative
@@ -197,6 +250,9 @@ export default {
           position absolute
           top calc(50% - 10px)
           left 185px
+          font-size 16px
+          width 16px
+          height 16px
           transition all 1s
     ul
       width 100%
@@ -213,5 +269,65 @@ export default {
         font-size 14px
         &:hover
           background #b3c0d1
-          transition all 0.9s
+          transition background 0.9s
+      .select
+        color white
+        background #b3c0d1
+  .isshade
+    height 100%
+    background #d3dce6
+    .menus
+      width 50px
+      height 50px
+      position absolute
+      bottom 0
+      left 0
+      text-align center
+      line-height 50px
+      cursor pointer
+      span
+        font-size 20px
+        font-weight bold
+    .menusicon
+      position relative
+      margin-top 10px
+      background #d3dce6
+      &:hover ul
+        display block
+        animation move 1s
+        transition all 3s
+        animation-fill-mode forwards
+        @keyframes move
+          50%
+            opacity 0
+          100%
+            opacity 1
+      h3
+        background #d3dce6
+        line-height 50px
+        text-align center
+        font-size 20px
+        cursor pointer
+      ul
+        position absolute
+        right -173px
+        top 5px
+        width 170px
+        opacity 0
+        z-index 999
+        display none
+        a
+          background #f0f0f0
+          display block
+          width 100%
+          padding 0 20px
+          box-sizing border-box
+          line-height 30px
+          font-size 14px
+          &:hover
+            background #b3c0d1
+            transition background 0.9s
+        .select
+          color white
+          background #b3c0d1
 </style>

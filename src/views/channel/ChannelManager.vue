@@ -1,5 +1,5 @@
 <!--
-  name : 用户查询
+  name : 渠道信息
   user : jusck
 -->
 <template>
@@ -27,4 +27,3 @@ export default {
 };
 </script>
 <style scoped lang='stylus'></style>
-
