@@ -5,6 +5,27 @@
     user-select: none;
 }
 
+input:-ms-input-placeholder {
+    color: #d0d0d0;
+}
+
+/* Internet Explorer 10+ */
+input::-webkit-input-placeholder {
+    color: #d0d0d0;
+}
+
+/* WebKit browsers */
+input::-moz-placeholder {
+    color: #d0d0d0;
+}
+
+/* Mozilla Firefox 19+ */
+input:-moz-placeholder {
+    color: #d0d0d0;
+}
+
+/* Mozilla Firefox 4 to 18 */
+
 html,
 body,
 div,

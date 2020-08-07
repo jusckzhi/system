@@ -52,7 +52,7 @@ export default {
           icon: "iconfont icon-yonghu",
           title: "用户管理系统",
           isOpen: false,
-          arrows: "iconfont icon-jiantouxia arrows",
+          arrows: "iconfont icon-sanjiaoxing arrows",
           child: [
             {
               link: "userquery",
@@ -80,7 +80,7 @@ export default {
           icon: "iconfont icon-qudao",
           title: "渠道管理系统",
           isOpen: false,
-          arrows: "iconfont icon-jiantouxia arrows",
+          arrows: "iconfont icon-sanjiaoxing arrows",
           child: [
             {
               link: "channelmanager",
@@ -104,7 +104,7 @@ export default {
           icon: "iconfont icon-zonghefuwuzhan",
           title: "服务站管理系统",
           isOpen: false,
-          arrows: "iconfont icon-jiantouxia arrows",
+          arrows: "iconfont icon-sanjiaoxing arrows",
           child: [
             {
               link: "servicefees",
@@ -128,7 +128,7 @@ export default {
           icon: "iconfont icon-yixuekepu",
           title: "健康科普管理系统",
           isOpen: false,
-          arrows: "iconfont icon-jiantouxia arrows",
+          arrows: "iconfont icon-sanjiaoxing arrows",
           child: [
             {
               link: "maintain",
@@ -144,7 +144,7 @@ export default {
           icon: "iconfont icon-caozuo",
           title: "操作员管理系统",
           isOpen: false,
-          arrows: "iconfont icon-jiantouxia arrows",
+          arrows: "iconfont icon-sanjiaoxing arrows",
           child: [
             {
               link: "role",
@@ -168,7 +168,7 @@ export default {
           icon: "iconfont icon-xitong",
           title: "系统参数管理系统",
           isOpen: false,
-          arrows: "iconfont icon-jiantouxia arrows",
+          arrows: "iconfont icon-sanjiaoxing arrows",
           child: [
             {
               link: "menus",
@@ -193,14 +193,14 @@ export default {
     open(index) {
       if (this.Menulist[index].isOpen) {
         this.Menulist[index].isOpen = false;
-        this.Menulist[index].arrows = "iconfont icon-jiantouxia arrows";
+        this.Menulist[index].arrows = "iconfont icon-sanjiaoxing arrows";
       } else {
         this.Menulist.forEach((item) => {
           item.isOpen = false;
-          item.arrows = "iconfont icon-jiantouxia arrows";
+          item.arrows = "iconfont icon-sanjiaoxing arrows";
         });
         this.Menulist[index].isOpen = true;
-        this.Menulist[index].arrows = "iconfont icon-dropUp arrows";
+        this.Menulist[index].arrows = "iconfont icon-sanjiaoxing-copy arrows";
       }
     },
     // 展开菜单
@@ -235,8 +235,9 @@ export default {
     h3
       position relative
       padding 0 20px
-      line-height 50px
+      line-height 60px
       cursor pointer
+      color #696969
       &:hover
         background #b3c0d1
         transition all 0.9s
@@ -250,7 +251,7 @@ export default {
           position absolute
           top calc(50% - 10px)
           left 185px
-          font-size 16px
+          font-size 32px
           width 16px
           height 16px
           transition all 1s
@@ -263,7 +264,7 @@ export default {
       a
         display block
         width 100%
-        padding 0 40px
+        padding 7px 40px
         box-sizing border-box
         line-height 30px
         font-size 14px
@@ -326,7 +327,7 @@ export default {
           font-size 14px
           &:hover
             background #b3c0d1
-            transition background 0.9s
+            transition all 0.9s
         .select
           color white
           background #b3c0d1

@@ -7,6 +7,15 @@ import 'element-ui/lib/theme-chalk/index.css';
 import "./assets/font/iconfont.css"
 Vue.use(ElementUI)
 
+// router.beforeEach((to, from, next) => {
+//   if (to.fullPath !== "/login") {
+//     if (!sessionStorage.getItem("logintoken")) {
+//       return next("/login")
+//     }
+//   }
+//   next()
+// })
+
 import "./assets/css/reset.css"
 Vue.config.productionTip = false
 

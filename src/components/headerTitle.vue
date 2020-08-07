@@ -7,9 +7,16 @@
       <p>新融汇通健康管家V0.1</p>
     </div>
     <div class="right">
-      <div class="user">
+      <div class="username">
         <span>你好：{{username?username:""}}</span>
         <div class="sub"></div>
+        <div class="user">
+          <ul>
+            <li>用户信息</li>
+            <li>修改密码</li>
+            <li @click="out">退出登录</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -24,7 +31,11 @@ export default {
       username: localStorage.getItem("adminName"),
     };
   },
-  methods: {},
+  methods: {
+    out() {
+      this.$router.replace("/login");
+    },
+  },
   mounted() {},
 };
 </script>
@@ -55,7 +66,7 @@ export default {
     height 100%
     display flex
     justify-content flex-end
-    .user
+    .username
       text-align center
       height 100%
       color #696969
@@ -75,6 +86,8 @@ export default {
             width 100%
       &:hover span
         color #fff
+      &:hover .user
+        display block
       span
         line-height 0px
         margin 25px 0 15px
@@ -84,4 +97,18 @@ export default {
         width 0%
         height 2px
         background #fff
+      .user
+        width 120px
+        background #696969
+        position fixed
+        top 53px
+        right 0px
+        padding 5px 0
+        display none
+        li
+          color #fff
+          line-height 40px
+          font-size 14px
+          &:hover
+            background #9f9f9f
 </style>

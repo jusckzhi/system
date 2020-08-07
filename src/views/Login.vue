@@ -7,17 +7,23 @@
     <img src="../assets/images/home_header_bg.jpg" alt />
     <div class="shade">
       <div class="user">
-        <h1>Login Form</h1>
+        <h1>Health Butler</h1>
         <div class="username">
           <span class="iconfont icon-yonghu"></span>
-          <input type="text" placeholder="Username" v-model="user.name" />
+          <input
+            type="text"
+            placeholder="Username"
+            v-model="obj.busidata.svrdata.loginid"
+            @keydown.enter="login"
+          />
         </div>
         <div class="password">
           <span class="iconfont icon-mima"></span>
           <input
             :type="flag==true?'password':'text'"
             placeholder="Password"
-            v-model="user.password"
+            v-model="obj.busidata.svrdata.loginpwd"
+            @keydown.enter="login"
           />
           <span
             :class="flag==true?'iconfont icon-yanjing':'iconfont icon-yanjing1'"
@@ -25,60 +31,134 @@
             @click="changeType"
           ></span>
         </div>
-        <div class="btn" @click="login">登录</div>
+        <!-- 验证码 -->
+        <div class="identifyCodes">
+          <span class="iconfont icon-yanzhengma"></span>
+          <input type="text" v-model="codes" placeholder="verification code" @keydown.enter="login" />
+          <div class="login-code" @click="refreshCode">
+            <!--验证码组件-->
+            <s-identify :identifyCode="identifyCode"></s-identify>
+          </div>
+        </div>
+        <div class="btn" @click="login">Login</div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import SIdentify from "../components/SIdentify";
+import { api } from "../util/request";
+import Qs from "qs";
 export default {
   props: {
     msg: String,
   },
+  components: {
+    SIdentify,
+  },
   data: function () {
     return {
-      user: {
-        name: "",
-        password: "",
+      obj: {
+        busidata: {
+          handleSessionLost: "false",
+          timeOut: "30000",
+          service: "login",
+          token: "",
+          svrdata: { loginid: "123", loginpwd: "123" },
+        },
       },
+      svrdata: {
+        loginid: "",
+        loginpwd: "",
+      },
+      identifyCodes: "1234567890abcdefjhijklinopqrsduvwxyz",
+      identifyCode: "",
+      codes: "",
       flag: true,
     };
   },
   methods: {
+    // 密码是否可见
     changeType() {
       this.flag = !this.flag;
     },
-    login() {
-      if (this.user.name == "" || this.user.password == "") {
-        this.$message.error({
-          message: "账号或密码不能为空",
-          duration: 2000,
-        });
-        return;
+    //刷新验证码
+    randomNum(min, max) {
+      return Math.floor(Math.random() * (max - min) + min);
+    },
+    refreshCode() {
+      this.identifyCode = "";
+      this.makeCode(this.identifyCodes, 4);
+    },
+    makeCode(o, l) {
+      for (let i = 0; i < l; i++) {
+        this.identifyCode += this.identifyCodes[
+          this.randomNum(0, this.identifyCodes.length)
+        ];
       }
-      if (this.user.name == "chenzhiqiang" && this.user.password == "123") {
-        this.$message({
-          message: "登录成功",
-          type: "success",
-        });
+    },
 
-        // 登录成功
-        // 用来标记登录没登录
-        var storage = window.localStorage;
-        storage.setItem("isLogin", true);
-        storage.setItem("adminName", this.user.name);
+    // 登录
+    login() {
+      // if (this.user.name == "" || this.user.password == "") {
+      //   this.$message.error({
+      //     message: "账号或密码不能为空",
+      //     duration: 2000,
+      //   });
+      //   return;
+      // }
 
-        this.$router.push("/home");
-      } else {
+      // 验证码不为空
+      if (this.codes == "") {
         this.$message.error({
-          message: "账号或密码错误",
+          message: "请输入验证码",
           duration: 2000,
         });
-        return;
+      } else if (this.identifyCode.toLowerCase() != this.codes.toLowerCase()) {
+        this.$message.error({
+          message: "验证码错误",
+          duration: 2000,
+        });
+        // 验证错误刷新验证码
+        this.identifyCode = "";
+        this.makeCode(this.identifyCodes, 4);
+      } else if (this.identifyCode.toLowerCase() == this.codes.toLowerCase()) {
+        api({
+          apiurl: "/plat",
+          data: this.obj,
+        }).then((res) => {
+          console.log(res);
+          if (res.data.result === "0") {
+            this.$message({
+              message: "登录成功",
+              type: "success",
+            });
+            this.$router.push("/home/welcome");
+            let logintoken = "";
+            sessionStorage.setItem("logintoken", res.data.logintoken);
+          }
+          if (res.data.result === "-1") {
+            this.$message.error({
+              message: "账号或密码错误",
+            });
+          }
+        });
+
+        //   // 登录成功
+        //   // 用来标记登录没登录
+        //   var storage = window.localStorage;
+        //   storage.setItem("isLogin", true);
+        //   storage.setItem("adminName", this.user.name);
+
+        //
       }
     },
   },
-  mounted() {},
+  mounted() {
+    // 初始化验证码
+    this.identifyCode = "";
+    this.makeCode(this.identifyCodes, 4);
+  },
   watch: {},
 };
 </script>
@@ -106,7 +186,7 @@ export default {
     align-items center
     .user
       width 450px
-      height 350px
+      height 400px
       h1
         line-height 100px
         margin-bottom 30px
@@ -139,6 +219,19 @@ export default {
           top 0
           right 0
           cursor pointer
+      .identifyCodes
+        display flex
+        justify-content space-between
+        margin-bottom 20px
+        position relative
+        span
+          position absolute
+          width 45px
+          height 45px
+          text-align center
+          line-height 45px
+          font-size 18px
+          color #696969
       .btn
         width 100%
         line-height 50px
