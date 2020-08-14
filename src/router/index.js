@@ -4,7 +4,12 @@ import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
 
+
+
 const routes = [{
+    path: "/ceshi",
+    component: () => import("../views/ceshi.vue"),
+  }, {
     path: "/home",
     component: Home,
     children: [
@@ -149,5 +154,14 @@ const routes = [{
 const router = new VueRouter({
   routes,
 });
+
+// router.beforeEach((to, from, next) => {
+//   if (to.fullPath !== "/login") {
+//     if (!sessionStorage.getItem("logintoken")) {
+//       return next("/login")
+//     }
+//   }
+//   next()
+// })
 
 export default router;

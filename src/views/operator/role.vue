@@ -15,11 +15,6 @@
       style="width: 100%"
     >
       <el-table-column label width="40"></el-table-column>
-      <el-table-column label="序号" width="150">
-        <template slot-scope="scope">
-          <span>{{(scope.$index+1+"").padStart(2,"0")}}</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="name" label="角色账号" sortable width="200"></el-table-column>
       <el-table-column prop="role" label="角色名称" sortable width="220"></el-table-column>
       <el-table-column prop="index" label="角色编号" width="180"></el-table-column>
@@ -29,8 +24,20 @@
           <el-input v-model="search" size="mini" placeholder="请输入关键字搜索" @change="input(scope)" />
         </template>
         <template slot-scope="scope">
-          <el-button size="mini" type="warning" @click="look(scope.row.id)">查看</el-button>
-          <el-button size="mini" type="danger" @click="del(scope.row.id)">删除</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            circle
+            @click="look(scope.row.id)"
+          ></el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
+            circle
+            @click="del(scope.row.id)"
+          ></el-button>
         </template>
       </el-table-column>
       <el-table-column label width="40"></el-table-column>

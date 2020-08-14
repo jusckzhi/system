@@ -64,7 +64,7 @@ export default {
           timeOut: "30000",
           service: "login",
           token: "",
-          svrdata: { loginid: "123", loginpwd: "123" },
+          svrdata: { loginid: "999", loginpwd: "999", opercode: "999999" },
         },
       },
       svrdata: {
@@ -128,6 +128,7 @@ export default {
           data: this.obj,
         }).then((res) => {
           console.log(res);
+          alert("登陆成功");
           if (res.data.result === "0") {
             this.$message({
               message: "登录成功",

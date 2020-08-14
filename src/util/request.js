@@ -1,6 +1,5 @@
 import axios from "axios";
 import Vue from "vue";
-import Qs from "qs";
 
 var vm = new Vue();
 
@@ -39,41 +38,17 @@ axios.interceptors.response.use(function (response) {
   return Promise.reject(error);
 })
 
-//
+
+
+
 // 基础路径
-
-const baseUrl = "http://192.168.0.117:8080";
-
-// 登录
-export const getLogin = (data) => {
-  return axios({
-    url: baseUrl + "/login",
-    method: "post",
-    data: JSON.stringify(data),
-  });
-};
-
-
-
-// 添加用户
-export const addUser = (data) => {
-  return axios({
-    url: baseUrl + "/addUser",
-    method: "post",
-    params: data,
-  });
-};
-
+const baseUrl = "http://192.168.0.117:8080"; //测试路径
 
 
 // 公共接口
-export const api = (({
+export const api = ({
   apiurl,
   data
 }) => {
-  return axios({
-    url: baseUrl + apiurl,
-    method: "post",
-    data: JSON.stringify(data),
-  })
-})
+  return axios.post(baseUrl + apiurl, JSON.stringify(data));
+};

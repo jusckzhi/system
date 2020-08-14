@@ -15,11 +15,6 @@
       style="width: 100%"
     >
       <el-table-column label width="40"></el-table-column>
-      <el-table-column label="字典编号" width="150">
-        <template slot-scope="scope">
-          <span>{{(scope.$index+1+"").padStart(2,"0")}}</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="name" label="字典名称" width="180"></el-table-column>
       <el-table-column prop="type" label="字典类型" width="250"></el-table-column>
       <el-table-column prop="state" label="状态" width="200"></el-table-column>

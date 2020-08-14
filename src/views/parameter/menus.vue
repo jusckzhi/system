@@ -28,7 +28,7 @@
 
       <el-table-column align="right" width="300px">
         <template slot="header" style="text-align:center">
-          <span>操作&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span>操作</span>
         </template>
         <template slot-scope="scope">
           <el-button size="mini" type="warning" @click="look(scope.row.id)">查看</el-button>
@@ -43,6 +43,7 @@
 <script>
 // import addService from "../../components/operator/addService";
 import menutree from "../../components/menutree";
+import { api } from "../../util/request";
 export default {
   props: {},
   components: {
@@ -168,10 +169,11 @@ export default {
     //   初始化
     init() {
       // 查询数据 ({}) 没有参数 用{} 空json代替
-      // findManage({}).then((res) => {
-      // if (res.data.isok) {
-      // this.tableData = res.data.data;
-      // }
+      // api({ }).then((res) => {
+      //   console.log(res);
+      //   if (res.data.isok) {
+      //     this.tableData = res.data.data;
+      //   }
       // });
     },
     // 对话框消失

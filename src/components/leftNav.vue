@@ -237,9 +237,9 @@ export default {
       padding 0 20px
       line-height 60px
       cursor pointer
-      color #696969
+      color #ccc
       &:hover
-        background #b3c0d1
+        background #555
         transition all 0.9s
       span
         display inline-block
@@ -259,7 +259,7 @@ export default {
       width 100%
       display flex
       flex-wrap wrap
-      background #f0f0f0
+      background #555
       transition all 9s
       a
         display block
@@ -268,15 +268,17 @@ export default {
         box-sizing border-box
         line-height 30px
         font-size 14px
+        color #ccc
         &:hover
-          background #b3c0d1
+          background #888
+          color #fff
           transition background 0.9s
       .select
         color white
-        background #b3c0d1
+        background #888
   .isshade
     height 100%
-    background #d3dce6
+    background #666
     .menus
       width 50px
       height 50px
@@ -292,7 +294,7 @@ export default {
     .menusicon
       position relative
       margin-top 10px
-      background #d3dce6
+      background #666
       &:hover ul
         display block
         animation move 1s
@@ -304,11 +306,12 @@ export default {
           100%
             opacity 1
       h3
-        background #d3dce6
+        background #666
         line-height 50px
         text-align center
         font-size 20px
         cursor pointer
+        color #ccc
       ul
         position absolute
         right -173px
@@ -331,4 +334,6 @@ export default {
         .select
           color white
           background #b3c0d1
+.icon-caidan
+  color #ccc
 </style>

@@ -39,6 +39,17 @@
         <el-form-item label="操作员姓名 :" prop="name">
           <el-input v-model="addChannel.name" placeholder="请输入渠道操作员姓名"></el-input>
         </el-form-item>
+
+        <el-form-item label="渠道选择 :" prop="channel">
+          <el-select v-model="addChannel.channel" clearable placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="手机号码 :" prop="tel">
           <el-input v-model="addChannel.tel" placeholder="请输入手机号码"></el-input>
         </el-form-item>
@@ -95,8 +106,23 @@ export default {
         name: "",
         tel: "",
         des: "",
+        channel: "",
         confirmPass: "",
       },
+      options: [
+        {
+          value: "0",
+          label: "渠道一",
+        },
+        {
+          value: "1",
+          label: "渠道二",
+        },
+        {
+          value: "2",
+          label: "渠道三",
+        },
+      ],
       isLook: false,
       rules: {
         user: [
@@ -191,6 +217,8 @@ export default {
 };
 </script>
 <style scoped lang="stylus">
+.el-select
+  width 100%
 .position
   position fixed
   top 0

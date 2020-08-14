@@ -15,11 +15,6 @@
       style="width: 100%"
     >
       <el-table-column label width="40"></el-table-column>
-      <el-table-column label="参数编号" width="150">
-        <template slot-scope="scope">
-          <span>{{(scope.$index+1+"").padStart(2,"0")}}</span>
-        </template>
-      </el-table-column>
       <el-table-column prop="name" label="参数名称" width="280"></el-table-column>
       <el-table-column prop="key" label="参数键名" width="250"></el-table-column>
       <el-table-column prop="value" label="参数键值" width="200"></el-table-column>

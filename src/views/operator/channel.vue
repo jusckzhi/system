@@ -8,18 +8,14 @@
       <h1>{{ pageName }}</h1>
     </div>
     <div class="btn">
-      <el-button type="success" @click="willAdd">新建</el-button>
+      <el-button type="info" @click="willAdd">新建</el-button>
     </div>
     <el-table
       :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase())|| data.tel.toLowerCase().includes(search.toLowerCase())|| data.user.toLowerCase().includes(search.toLowerCase())).slice((currpage - 1) * pagesize, currpage * pagesize)"
       style="width: 100%"
     >
       <el-table-column label width="40"></el-table-column>
-      <el-table-column label="序号" width="150">
-        <template slot-scope="scope">
-          <span>{{(scope.$index+1+"").padStart(2,"0")}}</span>
-        </template>
-      </el-table-column>
+
       <el-table-column prop="user" label="操作员账号" width="200"></el-table-column>
       <el-table-column prop="name" label="操作员姓名" width="200"></el-table-column>
       <el-table-column prop="index" label="操作员编号" width="220"></el-table-column>
@@ -29,8 +25,20 @@
           <el-input v-model="search" size="mini" placeholder="请输入关键字搜索" @change="input(scope)" />
         </template>
         <template slot-scope="scope">
-          <el-button size="mini" type="warning" @click="look(scope.row.id)">查看</el-button>
-          <el-button size="mini" type="danger" @click="del(scope.row.id)">删除</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            circle
+            @click="look(scope.row.id)"
+          ></el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
+            circle
+            @click="del(scope.row.id)"
+          ></el-button>
         </template>
       </el-table-column>
       <el-table-column label width="40"></el-table-column>

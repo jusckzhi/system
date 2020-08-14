@@ -91,7 +91,7 @@ export default {
       span
         line-height 0px
         margin 25px 0 15px
-        color #7e8c8d
+        color #ccc
       .sub
         bottom 5px
         width 0%

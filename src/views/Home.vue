@@ -56,7 +56,7 @@ export default {
   z-index 99
   width 100%
   height 50px !important
-  background-color #B3C0D1
+  background-color #696969
   color #333
   line-height 50px
 .el-aside
@@ -66,7 +66,7 @@ export default {
   z-index 98
   height 100%
   padding-top 50px
-  background-color #D3DCE6
+  background-color #666
   color #333
   text-align left
   overflow visible !important
@@ -75,7 +75,7 @@ export default {
   height 100vh
   padding 50px 0 0 50px !important
   box-sizing border-box
-  background-color #E9EEF3
+  background-color #fff
   color #333
   line-height 80px
 .small
