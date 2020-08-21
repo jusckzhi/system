@@ -17,10 +17,14 @@
     >
       <el-table-column label width="40"></el-table-column>
 
-      <el-table-column prop="user" label="操作员账号" width="200"></el-table-column>
-      <el-table-column prop="name" label="操作员姓名" width="200"></el-table-column>
-      <el-table-column prop="index" label="操作员编号" width="180"></el-table-column>
-      <el-table-column prop="tel" label="手机号码"></el-table-column>
+      <el-table-column prop="loginid" label="操作员账号" width="200"></el-table-column>
+      <el-table-column prop="opername" label="操作员姓名" width="200"></el-table-column>
+      <el-table-column prop="mobilenbr" label="手机号码" width="250"></el-table-column>
+      <el-table-column prop="remark" label="备注" width="250"></el-table-column>
+      <el-table-column prop="validflag" label="状态">
+        <template slot-scope="scope">{{scope.row.validflag == 1 ? '启用':'禁用'}}</template>
+      </el-table-column>
+
       <el-table-column align="right" width="300px">
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="请输入关键字搜索" @change="input(scope)" />
@@ -30,15 +34,17 @@
             size="mini"
             type="primary"
             icon="el-icon-edit"
+            title="详情修改"
             circle
-            @click="look(scope.row.id)"
+            @click="look(scope.row.loginid,scope.row.mobilenbr,scope.row.opername)"
           ></el-button>
           <el-button
             size="mini"
             type="danger"
             icon="el-icon-delete"
+            title="删除操作员"
             circle
-            @click="del(scope.row.id)"
+            @click="del(scope.row.opercode)"
           ></el-button>
         </template>
       </el-table-column>
@@ -52,7 +58,7 @@
       :page-size="pagesize"
       :pager-count="7"
       layout="prev, pager, next, jumper"
-      :total="tableData.length"
+      :total="tableData.length+1"
       :hide-on-single-page="true"
     ></el-pagination>
     <add-platform ref="add" :status="status" @hide="hide" @init="init"></add-platform>
@@ -62,6 +68,7 @@
 
 
 <script>
+import { api } from "../../util/request";
 import addPlatform from "../../components/operator/addPlatform";
 export default {
   props: {
@@ -72,52 +79,41 @@ export default {
   },
   data() {
     return {
+      // 查询
+      obj: {
+        busidata: {
+          handleSessionLost: "false",
+          timeOut: "30000",
+          service: "qryAllOper",
+          token: sessionStorage.getItem("logintoken"),
+          svrdata: {
+            offset: "",
+            limit: "",
+          },
+        },
+      },
       pageName: "",
       search: "",
       status: {
         title: "添加平台操作员",
         isAdd: true, //如果是添加 -true  如果是修改 -false
         showDialog: false, //对话框出现的状态
+        isLook: false,
       },
-      tableData: [
-        {
-          index: 1,
-          user: "javascript",
-          name: "张三",
-          tel: "13479301065",
-        },
-        {
-          index: 2,
-          user: "jquery",
-          name: "李四",
-          tel: "13479301065",
-        },
-        {
-          index: 3,
-          user: "react",
-          name: "王二",
-          tel: "13479301065",
-        },
-        {
-          index: 4,
-          user: "vue",
-          name: "麻子",
-          tel: "13479301065",
-        },
-      ],
-      currpage: 1,
-      pagesize: 10,
+      tableData: [],
+      currpage: 0,
+      pagesize: 20,
     };
   },
   methods: {
     //   初始化
-    init() {
-      // 查询数据 ({}) 没有参数 用{} 空json代替
-      // findManage({}).then((res) => {
-      // if (res.data.isok) {
-      // this.tableData = res.data.data;
-      // }
-      // });
+    async init() {
+      this.obj.busidata.token = sessionStorage.getItem("logintoken");
+      this.obj.busidata.svrdata.offset = this.currpage.toString();
+      this.obj.busidata.svrdata.limit = this.pagesize.toString();
+      await api({ data: this.obj }).then((res) => {
+        this.tableData = res.data.result;
+      });
     },
     // 对话框消失
     hide() {
@@ -130,33 +126,50 @@ export default {
       this.status.showDialog = true;
     },
     // 查看
-    look(id) {
-      this.$refs.add.look(id);
+    look(id, mobilenbr, name) {
+      this.$refs.add.look(id, mobilenbr, name);
       this.status.title = "修改平台操作员";
       this.status.isAdd = false;
       this.status.showDialog = true;
+      this.status.isLook = true;
     },
     // 删除
-    del(id) {
+    del(opercode) {
       this.$confirm("你确定要删除该操作员吗？", "提示", {
         confirmButtonText: "删除",
         cancelButtonText: "取消",
         type: "warning",
       })
-        // .then(() => {
-        // 确定删除
-        // delManage({ id: id }).then((res) => {
-        // 删除成功
-        // if (res.data.isok) {
-        // this.$message({
-        // message: res.data.info,
-        // type: "success",
-        // });
-        // 删除后重新渲染页面
-        // this.init();
-        // }
-        // });
-        // })
+        .then(() => {
+          // 确定删除
+          api({
+            data: {
+              busidata: {
+                handleSessionLost: "false",
+                timeOut: "30000",
+                service: "deleteOper",
+                token: sessionStorage.getItem("logintoken"),
+                svrdata: {
+                  opercode: opercode,
+                },
+              },
+            },
+          }).then((res) => {
+            if (res.data.resultCode == -1) {
+              this.$message.error({
+                message: "删除失败",
+              });
+            }
+
+            if (res.data.resultCode != -1) {
+              this.$message({
+                message: "删除成功",
+                type: "success",
+              });
+              this.init();
+            }
+          });
+        })
         .catch(() => {
           // 取消删除
           this.$message({
@@ -168,9 +181,11 @@ export default {
     input() {},
     handleCurrentChange(cpage) {
       this.currpage = cpage;
+      this.init();
     },
     handleSizeChange(psize) {
       this.pagesize = psize;
+      this.init();
     },
   },
   mounted() {

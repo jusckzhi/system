@@ -15,23 +15,47 @@
       style="width: 100%"
     >
       <el-table-column label width="40"></el-table-column>
-      <el-table-column prop="name" label="字典名称" width="180"></el-table-column>
-      <el-table-column prop="type" label="字典类型" width="250"></el-table-column>
-      <el-table-column prop="state" label="状态" width="200"></el-table-column>
-      <el-table-column prop="des" label="备注"></el-table-column>
+      <el-table-column prop="dictid" label="字典id" width="150"></el-table-column>
+      <el-table-column prop="dictname" label="字典名称" width="180"></el-table-column>
+      <el-table-column prop="dicttypeid" label="类型id" width="150"></el-table-column>
+      <el-table-column prop="dicttypename" label="类型名称" width="200"></el-table-column>
+      <el-table-column prop="showflag" label="是否显示" width="150">
+        <template slot-scope="scope">{{scope.row.showflag == 1 ? '是':'否'}}</template>
+      </el-table-column>
+      <el-table-column prop="validflag" label="状态" width="150">
+        <template slot-scope="scope">
+          <span
+            :class="[scope.row.validflag == 1 ?'blue' :'red']"
+          >{{scope.row.validflag == 1 ? '启用':'禁用'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="remark" label="备注"></el-table-column>
       <el-table-column align="right" width="300px">
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="请输入关键字搜索" @change="input(scope)" />
         </template>
         <template slot-scope="scope">
-          <el-button size="mini" type="warning" @click="look(scope.row.id)">查看</el-button>
-          <el-button size="mini" type="danger" @click="del(scope.row.id)">删除</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            icon="el-icon-edit"
+            title="详情修改"
+            circle
+            @click="look(scope.row.loginid,scope.row.mobilenbr,scope.row.opername)"
+          ></el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
+            title="删除操作员"
+            circle
+            @click="del(scope.row.opercode)"
+          ></el-button>
         </template>
       </el-table-column>
       <el-table-column label width="40"></el-table-column>
     </el-table>
     <el-pagination
-      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currpage"
       :page-size="pagesize"
@@ -47,6 +71,7 @@
 
 
 <script>
+import { uniApi } from "../../util/request";
 import addChannel from "../../components/operator/addChannel";
 export default {
   components: {
@@ -54,62 +79,39 @@ export default {
   },
   data() {
     return {
+      svrdata: {
+        offset: "",
+        limit: "",
+      },
       pageName: "",
       search: "",
       status: {
         title: "添加渠道操作员",
-        isAdd: true, //如果是添加 -true  如果是修改 -false
-        showDialog: false, //对话框出现的状态
+        isAdd: true, //是否添加
+        showDialog: false, //对话框状态
       },
-      tableData: [
-        {
-          index: "1",
-          state: "正常",
-          name: "用户性别",
-          type: "sys_user_sex",
-          des: "用户性别列表",
-        },
-        {
-          index: "2",
-          state: "正常",
-          name: "菜单状态",
-          type: "sys_show_hide",
-          des: "菜单状态列表",
-        },
-        {
-          index: "3",
-          state: "正常",
-          name: "任务状态",
-          type: "sys_normal_disable",
-          des: "系统开关列表",
-        },
-        {
-          index: "4",
-          state: "正常",
-          name: "任务分组",
-          type: "sys_job_status",
-          des: "任务开关列表",
-        },
-      ],
+      tableData: [],
       currpage: 1,
-      pagesize: 10,
+      pagesize: 20,
     };
   },
   methods: {
     //   初始化
     init() {
-      // 查询数据 ({}) 没有参数 用{} 空json代替
-      // findManage({}).then((res) => {
-      // if (res.data.isok) {
-      // this.tableData = res.data.data;
-      // }
-      // });
+      this.svrdata = {
+        offset: this.currpage - 1,
+        limit: this.pagesize,
+      };
+      uniApi("qryAllDict", this.svrdata).then((res) => {
+        console.log(res);
+        this.tableData = res.data.result;
+      });
     },
-    // 对话框消失
+    // 关闭对话框
     hide() {
       this.status.showDialog = false;
     },
-    // 点击了添加按钮，出现添加对话框
+    // 添加
     willAdd() {
       this.status.title = "添加渠道操作员";
       this.status.isAdd = true;
@@ -152,11 +154,9 @@ export default {
         });
     },
     input() {},
+    // 分页页数切换
     handleCurrentChange(cpage) {
       this.currpage = cpage;
-    },
-    handleSizeChange(psize) {
-      this.pagesize = psize;
     },
   },
   mounted() {
@@ -184,4 +184,8 @@ export default {
     justify-content flex-start
     padding 0 40px
     background #fff
+  .blue
+    color #67c23a
+  .red
+    color red
 </style>

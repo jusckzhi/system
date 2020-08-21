@@ -1,58 +1,39 @@
 <template>
   <div class="position" v-if="status.showDialog">
     <div class="center">
-      <span @click="cancel">x</span>
+      <span @click="cancel" class="el-icon-circle-close"></span>
       <p class="title">{{status.title}}</p>
 
       <el-form
         label-position="right"
         label-width="100px"
         status-icon
-        :model="addRole"
+        :model="obj.busidata.svrdata"
         :rules="rules"
-        ref="addRole"
+        ref="svrdata"
       >
-        <el-form-item label="账号 :" prop="user">
-          <el-input v-model="addRole.user " placeholder="请输入将添加的账号"></el-input>
+        <el-form-item label="父角色编号 :" prop="parrolecode">
+          <el-input v-model="obj.busidata.svrdata.parrolecode " placeholder="请输入将添加的账号"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="pass">
-          <el-input
-            type="password"
-            show-password
-            v-model="addRole.pass"
-            autocomplete="off"
-            placeholder="请输入密码"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPass" v-if="status.isAdd">
-          <el-input
-            type="password"
-            show-password
-            v-model="addRole.confirmPass"
-            autocomplete="off"
-            placeholder="请确认密码"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="角色名称 :" prop="orle" width="600">
+        <el-form-item label="角色名称 :" prop="rolename" width="600">
           <div class="grid-content bg-purple-light" style="width:100%">
-            <el-select v-model="addRole.orle" clearable placeholder="请选择" style="width:100%">
+            <el-select
+              v-model="obj.busidata.svrdata.rolename"
+              clearable
+              placeholder="请选择"
+              style="width:100%"
+            >
               <el-option v-for="it in options" :key="it.value" :label="it.label" :value="it.value"></el-option>
             </el-select>
           </div>
         </el-form-item>
-        <el-form-item label="电话 :" prop="tel">
-          <el-input v-model="addRole.tel" placeholder="请输入手机号码"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱 :" prop="email">
-          <el-input v-model="addRole.email" placeholder="请输入邮箱地址"></el-input>
-        </el-form-item>
-        <el-form-item label="备注 :">
-          <el-input v-model="addRole.des"></el-input>
+        <el-form-item label="备注 :" prop="remark">
+          <el-input v-model="obj.busidata.svrdata.remark"></el-input>
         </el-form-item>
 
         <div class="bt">
           <el-button @click="cancel">取消</el-button>
-          <el-button type="primary" v-if="status.isAdd" @click="confirm">添加</el-button>
+          <el-button type="primary" v-if="status.isAdd" @click="confirm('svrdata')">添加</el-button>
           <el-button type="primary" v-else @click="update">修改</el-button>
         </div>
       </el-form>
@@ -60,90 +41,54 @@
   </div>
 </template>
 <script>
-// import { addRole, findUser, updateUser } from "../util/request";
+import { api } from "../../util/request";
 export default {
   props: ["status"],
   components: {},
   data() {
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.addRole.confirmPass !== "") {
-          this.$refs.addRole.validateField("confirmPass");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.addRole.pass) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
-    var validateTel = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入手机号码"));
-      } else if (!/^1[3456789]\d{9}$/.test(value)) {
-        callback(new Error("请输入正确的手机号码"));
-      } else {
-        callback();
-      }
-    };
     return {
-      addRole: {
-        user: "",
-        pass: "",
-        orle: "",
-        tel: "",
-        email: "",
-        des: "",
-        confirmPass: "",
+      obj: {
+        busidata: {
+          handleSessionLost: "false",
+          timeOut: "30000",
+          service: "addOneRole",
+          token: "",
+          svrdata: {
+            rolename: "",
+            parrolecode: "",
+            remark: "",
+          },
+        },
       },
-
-      isLook: false,
       options: [
         {
-          value: "0",
-          label: "平台操作员",
+          id: "1",
+          value: "平台管理员角色",
+          label: "平台管理员角色",
         },
         {
-          value: "1",
-          label: "渠道操作员",
+          id: "2",
+          value: "渠道管理员角色",
+          label: "渠道管理员角色",
         },
         {
-          value: "2",
-          label: "服务站操作员",
+          id: "3",
+          value: "服务站管理员角色",
+          label: "服务站管理员角色",
         },
         {
-          value: "3",
-          label: "用户",
+          id: "4",
+          value: "系统操作员角色",
+          label: "系统操作员角色",
         },
       ],
       // 表单正则验证规则
       rules: {
-        user: [
-          { required: true, message: "请输入新增角色账号", trigger: "blur" },
-          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
+        parrolecode: [
+          { required: true, message: "请输入父角色编号", trigger: "blur" },
         ],
-        pass: [{ required: true, validator: validatePass, trigger: "blur" }],
-        confirmPass: [
-          { required: true, validator: validatePass2, trigger: "blur" },
-        ],
-        orle: [
-          { required: true, message: "请选择角色类型", trigger: "change" },
-        ],
-        tel: [{ required: true, validator: validateTel, trigger: "blur" }],
-        email: [
-          { required: true, message: "请输入邮箱地址", trigger: "blur" },
-          {
-            type: "email",
-            message: "请输入正确的邮箱地址",
-            trigger: "blur",
-          },
+        rolename: [
+          { required: true, message: "请选择角色名称", trigger: "change" },
         ],
       },
     };
@@ -154,69 +99,82 @@ export default {
       this.empty();
       this.$emit("hide");
     },
-    // 清空对话框内容
+    // // 清空对话框内容
     empty() {
-      this.addRole = {
-        name: "",
-        pass: "",
-        orle: "",
-        tel: "",
-        email: "",
-        sex: "",
-        idx: "",
-        des: "",
-        time: "",
+      this.obj.busidata.svrdata = {
+        rolename: "",
+        parrolecode: "",
+        remark: "",
       };
-      this.confirmPass = "";
     },
-    // 添加
-    confirm() {
-      this.isLook = false;
-
-      // 发起请求添加管理员
-      addRole(data).then((res) => {
-        if (res.data.isok) {
-          this.$message({
-            message: res.data.info,
-            type: "success",
+    // // 添加
+    confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          api({
+            data: this.obj,
+          }).then((res) => {
+            if (res.data.resultCode != -1) {
+              this.$message({
+                message: "添加成功",
+                type: "success",
+              });
+              this.cancel();
+              this.$emit("init");
+            }
           });
-          // 清空对话框
-          this.empty();
-          // 关闭对话框
-          this.$emit("hide");
-          // 查询管理员
-          this.$emit("init");
+        } else {
+          return false;
         }
       });
     },
-    // 查看
-    look(id) {
-      this.isLook = true;
-      findUser({
-        id: id,
-      }).then((res) => {
-        // 获取到某条数据
-        if (res.data.isok) {
-          this.addRole = res.data.data[0];
-        }
-      });
+    // // 查看
+    look(rolecode, rolename, parrolecode, remark, validflag) {
+      this.obj.busidata.svrdata = {
+        rolecode: rolecode,
+        validflag,
+        rolename,
+        parrolecode,
+        remark,
+      };
     },
-    // 修改
+    // // 修改
     update() {
-      updateUser(this.addRole).then((res) => {
-        if (res.data.isok) {
+      api({
+        data: {
+          busidata: {
+            handleSessionLost: "false",
+            timeOut: "30000",
+            service: "updateRole",
+            token: sessionStorage.getItem("logintoken"),
+            svrdata: this.obj.busidata.svrdata,
+          },
+        },
+      }).then((res) => {
+        if (res.data.resultCode == 1) {
           this.$message({
-            message: res.data.info,
+            message: res.data.message,
             type: "success",
           });
-          // 清空对话框
-          this.empty();
-          // 通知父组件  让对话框消失
-          this.$emit("hide");
-          // 通知父组件重新查询数据
+          this.cancel();
           this.$emit("init");
         }
       });
+
+      //   updateUser(this.addRole).then((res) => {
+      //     if (res.data.isok) {
+      //       this.$message({
+      //         message: res.data.info,
+      //         type: "success",
+      //       });
+      //       // 清空对话框
+      //       this.empty();
+      //       // 通知父组件  让对话框消失
+      //       this.$emit("hide");
+      //       // 通知父组件重新查询数据
+      //       this.$emit("init");
+      //     }
+      //   });
     },
   },
 };
@@ -240,12 +198,14 @@ export default {
     background #fff
   span
     position absolute
-    top -20px
-    right 15px
+    top 10px
+    right 10px
     font-size 20px
     color #ccc
     cursor pointer
     user-select none
+    &:hover
+      color red
   .title
     text-align center
     font-size 20px

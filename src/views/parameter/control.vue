@@ -3,7 +3,7 @@
   user : jusck
 -->
 <template>
-  <div class="channel">
+  <div class="control">
     <div class="title">
       <h1>{{ pageName }}</h1>
     </div>
@@ -41,24 +41,25 @@
       :total="tableData.length"
       :hide-on-single-page="true"
     ></el-pagination>
-    <add-channel ref="add" :status="status" @hide="hide" @init="init"></add-channel>
+    <add-control ref="add" :status="status" @hide="hide" @init="init"></add-control>
   </div>
 </template>
 
 
 
 <script>
-import addChannel from "../../components/operator/addChannel";
+import { uniApi } from "../../util/request";
+import addControl from "../../components/addParameter/addControl";
 export default {
   components: {
-    addChannel,
+    addControl,
   },
   data() {
     return {
       pageName: "",
       search: "",
       status: {
-        title: "添加渠道操作员",
+        title: "添加控制参数",
         isAdd: true, //如果是添加 -true  如果是修改 -false
         showDialog: false, //对话框出现的状态
       },
@@ -95,12 +96,10 @@ export default {
   methods: {
     //   初始化
     init() {
-      // 查询数据 ({}) 没有参数 用{} 空json代替
-      // findManage({}).then((res) => {
-      // if (res.data.isok) {
-      // this.tableData = res.data.data;
-      // }
-      // });
+      uniApi("qryCtrlP", { ctrlparamtype }).then((res) => {
+        console.log(res);
+        this.tableData = res.data.result;
+      });
     },
     // 对话框消失
     hide() {
@@ -108,14 +107,14 @@ export default {
     },
     // 点击了添加按钮，出现添加对话框
     willAdd() {
-      this.status.title = "添加渠道操作员";
+      this.status.title = "添加控制参数";
       this.status.isAdd = true;
       this.status.showDialog = true;
     },
     // 查看
     look(id) {
       this.$refs.add.look(id);
-      this.status.title = "修改渠道操作员";
+      this.status.title = "修改控制参数";
       this.status.isAdd = false;
       this.status.showDialog = true;
     },
@@ -163,7 +162,7 @@ export default {
 };
 </script>
 <style scoped lang='stylus'>
-.channel
+.control
   height 100%
   background #fff
   .title

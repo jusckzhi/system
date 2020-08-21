@@ -1,7 +1,23 @@
 <template>
-  <div class="ceshi">
-    <el-tree :data="treeData" show-checkbox node-key="menucode"></el-tree>
+  <div class="bg">
+    <div class="ceshi">
+    <el-tree
+      :data="treeData"
+      show-checkbox
+      default-expand-all
+      node-key="menucode"
+      ref="tree"
+      highlight-current
+      :props="defaultProps"
+      :default-checked-keys="checkedKeys"
+      id="tree"
+    ></el-tree>
+    <div class="btn">
+      <el-button  type="text" size="medium" @click="getCheckedKeys">修改权限</el-button>
+    </div>
   </div>
+  </div>
+  
 </template>
 <script>
 export default {
@@ -2371,19 +2387,27 @@ export default {
         logintoken: "b3TVeWOuS6P/wqNektQXvr65nbQ=",
         message: "亲,登录成功!",
       },
+      // 节点遍历数据
       treeData: [],
+      // 节点控制参数
+      defaultProps: {
+        children: "child",
+        label: "menuname",
+      },
+      // 节点默认选中
+      checkedKeys:[]
+      
     };
   },
   methods: {
+    getCheckedKeys() {
+      console.log(this.$refs.tree.getCheckedKeys());
+    },
+
     find() {
       var newArr1 = [];
       var newArr2 = [];
       var newArr3 = [];
-      // arr.forEach(item => {
-      //     if (item.leafflag == '0') {
-      //         newArr.push(item)
-      //     }
-      // })
       let arr = this.res.result;
 
       for (let i = 0; i < arr.length; i++) {
@@ -2396,6 +2420,7 @@ export default {
         if (arr[i].leafflag == "2") {
           newArr3.push(arr[i]);
         }
+        this.checkedKeys.push(arr[i].menucode)
       }
 
       for (var a = 0; a < newArr1.length; a++) {
@@ -2417,9 +2442,39 @@ export default {
   },
   mounted() {
     this.find();
+    console.log(this.checkedKeys)
     console.log(this.res);
     console.log(this.treeData);
   },
 };
 </script>
-<style scoped lang='stylus'></style>
+<style  lang='stylus'>
+.bg
+  width 100vw
+  height 100vh
+  position fixed
+  background rgba(0,0,0,0.6)
+  display flex
+  justify-content center
+  .ceshi
+    clear:both;
+    width 75%
+    margin 40px auto 0px
+
+    #tree
+      width 100%
+      display flex
+      justify-content space-around
+      background #f4f4f4
+      padding 20px 0 0px
+
+      &>div 
+        background #f0f0f0
+        padding 10px 30px 10px 10px
+        border 1px solid #ccc
+    .btn 
+      text-align right
+      padding-right 30px
+      padding-top 10px
+      background #f4f4f4
+</style>

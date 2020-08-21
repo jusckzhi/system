@@ -3,28 +3,40 @@
   user : jusck
 -->
 <template>
-  <div class="name">
-    <h1>
-      这是
-      <span style="color:red">{{ pageName }}</span> 页面
-    </h1>
+  <div class="menus">
+    <div class="title">
+      <h1>{{ pageName }}</h1>
+    </div>
   </div>
 </template>
 <script>
 export default {
-  props: {
-    msg: String,
-  },
+  props: {},
+  components: {},
   data() {
     return {
       pageName: "",
     };
   },
-  methods: {},
+  methods: {
+    init() {},
+    input() {},
+  },
   mounted() {
     this.pageName = this.$route.name;
+    this.init();
   },
 };
 </script>
-<style scoped lang='stylus'></style>
+<style scoped lang='stylus'>
+.menus
+  height 100%
+  background #fff
+  .title
+    background #fff
+    text-align center
+    h1
+      font-size 20px
+      color #939e9f
+</style>
 

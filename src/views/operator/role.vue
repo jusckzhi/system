@@ -15,28 +15,43 @@
       style="width: 100%"
     >
       <el-table-column label width="40"></el-table-column>
-      <el-table-column prop="name" label="角色账号" sortable width="200"></el-table-column>
-      <el-table-column prop="role" label="角色名称" sortable width="220"></el-table-column>
-      <el-table-column prop="index" label="角色编号" width="180"></el-table-column>
-      <el-table-column prop="des" label="备注"></el-table-column>
+      <el-table-column prop="parrolecode" label="父角色编号" width="150"></el-table-column>
+      <el-table-column prop="rolename" label="角色名称" width="220"></el-table-column>
+      <el-table-column prop="validflag" label="状态" width="180">
+        <template slot-scope="scope">{{scope.row.validflag==1?'启用':'禁用'}}</template>
+      </el-table-column>
+      <el-table-column prop="remark" label="备注"></el-table-column>
       <el-table-column align="right" width="300px">
         <template slot="header" slot-scope="scope">
           <el-input v-model="search" size="mini" placeholder="请输入关键字搜索" @change="input(scope)" />
         </template>
         <template slot-scope="scope">
+          <!-- 权限修改 -->
+          <el-button
+            size="mini"
+            type="primary"
+            icon="el-icon-edit-outline"
+            title="权限修改"
+            circle
+            @click="permission(scope.row.id)"
+          ></el-button>
+          <!-- 角色信息查看/修改 -->
           <el-button
             size="mini"
             type="primary"
             icon="el-icon-edit"
+            title="详情修改"
             circle
-            @click="look(scope.row.id)"
+            @click="look(scope.row.rolecode,scope.row.rolename,scope.row.parrolecode,scope.row.remark,scope.row.validflag)"
           ></el-button>
+          <!-- 删除角色 -->
           <el-button
             size="mini"
             type="danger"
             icon="el-icon-delete"
+            title="删除角色"
             circle
-            @click="del(scope.row.id)"
+            @click="del(scope.row.rolecode)"
           ></el-button>
         </template>
       </el-table-column>
@@ -54,22 +69,33 @@
       :hide-on-single-page="true"
     ></el-pagination>
     <add-role ref="add" :status="status" @hide="hide" @init="init"></add-role>
+    <jurisdiction res="compile" :msgs="msgs" @cancel="cancel"></jurisdiction>
   </div>
 </template>
 
-
-
 <script>
+import { api } from "../../util/request";
 import addRole from "../../components/operator/addRole";
+import jurisdiction from "../../components/operator/jurisdiction";
 export default {
-  props: {
-    msg: String,
-  },
   components: {
     addRole,
+    jurisdiction,
   },
   data() {
     return {
+      obj: {
+        busidata: {
+          handleSessionLost: "false",
+          timeOut: "30000",
+          service: "qryAllRole",
+          token: sessionStorage.getItem("logintoken"),
+          svrdata: {
+            offset: "",
+            limit: "",
+          },
+        },
+      },
       pageName: "",
       search: "",
       status: {
@@ -77,45 +103,23 @@ export default {
         isAdd: true, //如果是添加 -true  如果是修改 -false
         showDialog: false, //对话框出现的状态
       },
-      tableData: [
-        {
-          index: "y01",
-          name: "admin",
-          role: "平台操作员",
-          des: "天若有情天亦老",
-        },
-        {
-          index: "x02",
-          name: "jusck",
-          role: "服务站操作员",
-          des: "人若有情死得早",
-        },
-        {
-          index: "y03",
-          name: "xiaozhi",
-          role: "渠道操作员",
-          des: "穷则独善其身",
-        },
-        {
-          index: "a04",
-          name: "xiaoqiang",
-          role: "用户",
-          des: "富则妻妾成群",
-        },
-      ],
+      msgs: {
+        showMsg: false,
+      },
+      tableData: [],
       currpage: 1,
       pagesize: 10,
     };
   },
   methods: {
     //   初始化
-    init() {
-      // 查询数据 ({}) 没有参数 用{} 空json代替
-      // findManage({}).then((res) => {
-      // if (res.data.isok) {
-      // this.tableData = res.data.data;
-      // }
-      // });
+    async init() {
+      this.obj.busidata.token = sessionStorage.getItem("logintoken");
+      this.obj.busidata.svrdata.offset = this.currpage.toString();
+      this.obj.busidata.svrdata.limit = this.pagesize.toString();
+      await api({ data: this.obj }).then((res) => {
+        this.tableData = res.data.result;
+      });
     },
     // 对话框消失
     hide() {
@@ -127,34 +131,58 @@ export default {
       this.status.isAdd = true;
       this.status.showDialog = true;
     },
-    // 查看
-    look(id) {
-      this.$refs.add.look(id);
+    // 权限修改显示
+    permission() {
+      this.msgs.showMsg = true;
+    },
+    // 修改权限关闭
+    cancel() {
+      this.msgs.showMsg = false;
+    },
+    // 角色信息编辑
+    look(rolecode, rolename, parrolecode, remark, validflag) {
+      this.$refs.add.look(rolecode, rolename, parrolecode, remark, validflag);
       this.status.title = "修改角色";
       this.status.isAdd = false;
       this.status.showDialog = true;
     },
     // 删除
-    del(id) {
+    del(rolecode) {
       this.$confirm("你确定要删除角色吗？", "提示", {
         confirmButtonText: "删除",
         cancelButtonText: "取消",
         type: "warning",
       })
-        // .then(() => {
-        // 确定删除
-        // delManage({ id: id }).then((res) => {
-        // 删除成功
-        // if (res.data.isok) {
-        // this.$message({
-        // message: res.data.info,
-        // type: "success",
-        // });
-        // 删除后重新渲染页面
-        // this.init();
-        // }
-        // });
-        // })
+        .then(() => {
+          // 确定删除
+          api({
+            data: {
+              busidata: {
+                handleSessionLost: "false",
+                timeOut: "30000",
+                service: "deleteRole",
+                token: sessionStorage.getItem("logintoken"),
+                svrdata: {
+                  rolecode: rolecode,
+                },
+              },
+            },
+          }).then((res) => {
+            if (res.data.resultCode == -1) {
+              this.$message.error({
+                message: "删除失败",
+              });
+            }
+
+            if (res.data.resultCode != -1) {
+              this.$message({
+                message: "删除成功",
+                type: "success",
+              });
+              this.init();
+            }
+          });
+        })
         .catch(() => {
           // 取消删除
           this.$message({
@@ -172,6 +200,7 @@ export default {
     },
   },
   mounted() {
+    // console.log(JSON.parse(sessionStorage.getItem("permissionResult")));
     this.pageName = this.$route.name;
     this.init();
   },

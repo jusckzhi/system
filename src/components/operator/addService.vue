@@ -1,28 +1,28 @@
 <!--
-  name : 添加服务站操作员
+  name : 添加渠道管理员
   user : jusck
 -->
 <template>
   <div class="position" v-if="status.showDialog">
     <div class="center">
-      <span @click="cancel">x</span>
+      <span @click="cancel" class="el-icon-circle-close"></span>
       <p class="title">{{status.title}}</p>
 
       <el-form
         label-position="right"
         label-width="100px"
-        :model="addService"
+        :model="svrdata"
         :rules="rules"
-        ref="addService"
+        ref="svrdatas"
       >
-        <el-form-item label="账号 :" prop="user">
-          <el-input v-model="addService.user " placeholder="请输入将添加的管理员账号"></el-input>
+        <el-form-item label="账号 :" prop="loginid">
+          <el-input v-model="svrdata.loginid" placeholder="请输入将添加的账号"></el-input>
         </el-form-item>
-        <el-form-item label="密码 :" prop="pass">
+        <el-form-item label="密码 :" prop="loginpwd">
           <el-input
             type="password"
             show-password
-            v-model="addService.pass"
+            v-model="svrdata.loginpwd"
             autocomplete="off"
             placeholder="请输入密码"
           ></el-input>
@@ -31,31 +31,40 @@
           <el-input
             type="password"
             show-password
-            v-model="addService.confirmPass"
+            v-model="svrdata.confirmPass"
             autocomplete="off"
             placeholder="请确认密码"
           ></el-input>
         </el-form-item>
-        <el-form-item label="操作员姓名 :" prop="name">
-          <el-input v-model="addService.name" placeholder="请输入服务站操作员姓名"></el-input>
+        <el-form-item label="用户名 :" prop="opername">
+          <el-input v-model="svrdata.opername" placeholder="请输入平台操作员姓名"></el-input>
         </el-form-item>
-        <el-form-item label="手机号码 :" prop="tel">
-          <el-input v-model="addService.tel" placeholder="请输入手机号码"></el-input>
+        <el-form-item label="手机号码 :" prop="mobilenbr">
+          <el-input v-model="svrdata.mobilenbr" placeholder="请输入手机号码"></el-input>
         </el-form-item>
-        <el-form-item label="备注 :">
-          <el-input v-model="addService.des"></el-input>
+        <el-form-item label="备注:" prop="remark">
+          <el-input v-model="svrdata.remark" placeholder="请输入备注信息"></el-input>
+        </el-form-item>
+        <el-form-item label="状态:" prop="validflag" v-if="status.isLook">
+          <el-switch
+            v-model="svrdata.validflag"
+            active-text="启用"
+            inactive-text="禁用"
+            active-value="1"
+            inactive-value="0"
+          ></el-switch>
         </el-form-item>
         <div class="bt">
           <el-button @click="cancel">取消</el-button>
-          <el-button type="primary" v-if="status.isAdd" @click="confirm">添加</el-button>
-          <el-button type="primary" v-else @click="update">修改</el-button>
+          <el-button type="primary" v-if="status.isAdd" @click="confirm('svrdatas')">添加</el-button>
+          <el-button type="primary" v-else @click="update('svrdatas')">修改</el-button>
         </div>
       </el-form>
     </div>
   </div>
 </template>
 <script>
-// import { addService, findUser, updateUser } from "../util/request";
+import { uniApi } from "../../util/request";
 export default {
   props: ["status"],
   components: {},
@@ -64,8 +73,8 @@ export default {
       if (value === "") {
         callback(new Error("请输入密码"));
       } else {
-        if (this.addService.confirmPass !== "") {
-          this.$refs.addService.validateField("confirmPass");
+        if (this.svrdata.confirmPass !== "") {
+          this.$refs.svrdatas.validateField("confirmPass");
         }
         callback();
       }
@@ -73,7 +82,7 @@ export default {
     var validatePass2 = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请再次输入密码"));
-      } else if (value !== this.addService.pass) {
+      } else if (value !== this.svrdata.loginpwd) {
         callback(new Error("两次输入密码不一致!"));
       } else {
         callback();
@@ -89,33 +98,36 @@ export default {
       }
     };
     return {
-      addService: {
-        user: "",
-        pass: "",
-        name: "",
-        tel: "",
-        des: "",
+      svrdata: {
+        loginid: "",
+        loginpwd: "",
+        mobilenbr: "",
+        opername: "",
         confirmPass: "",
+        remark: "",
+        validflag: "",
+        partnerid: "0",
+        opercode: "",
+        stationid: "0",
       },
+
       isLook: false,
       rules: {
-        user: [
-          { required: true, message: "请输入新增角色账号", trigger: "blur" },
+        loginid: [
+          { required: true, message: "请输入新增操作员账号", trigger: "blur" },
           { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
         ],
-        pass: [{ required: true, validator: validatePass, trigger: "blur" }],
+        loginpwd: [
+          { required: true, validator: validatePass, trigger: "blur" },
+        ],
         confirmPass: [
           { required: true, validator: validatePass2, trigger: "blur" },
         ],
-        name: [{ required: true, message: "请输入操作姓名", trigger: "blur" }],
-        tel: [{ required: true, validator: validateTel, trigger: "blur" }],
-        email: [
-          { required: true, message: "请输入邮箱地址", trigger: "blur" },
-          {
-            type: "email",
-            message: "请输入正确的邮箱地址",
-            trigger: "blur",
-          },
+        opername: [
+          { required: true, message: "请输入操作员用户名", trigger: "blur" },
+        ],
+        mobilenbr: [
+          { required: true, validator: validateTel, trigger: "blur" },
         ],
       },
     };
@@ -123,68 +135,80 @@ export default {
   methods: {
     //  取消 关闭 添加
     cancel() {
+      this.status.isLook = false;
       this.empty();
       this.$emit("hide");
     },
     // 清空对话框内容
     empty() {
-      this.addService = {
-        user: "",
-        pass: "",
-        name: "",
-        tel: "",
-        des: "",
+      this.svrdata = {
+        mobilenbr: "",
+        loginid: "",
+        loginpwd: "",
+        opername: "",
+        confirmPass: "",
+        remark: "",
       };
-      this.confirmPass = "";
     },
     // 添加
-    confirm() {
-      this.isLook = false;
-      // 验证两次密码是否不一致
-
-      // 发起请求添加渠道操作员
-      addService(data).then((res) => {
-        if (res.data.isok) {
-          this.$message({
-            message: res.data.info,
-            type: "success",
+    confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 输入正确可以添加管理员
+          uniApi("addSerOper", this.svrdata).then((res) => {
+            if (res.data.resultCode === -1) {
+              this.$message.error({
+                message: "手机号码已被注册",
+              });
+              this.empty();
+            }
+            if (res.data.resultCode != -1) {
+              this.$message({
+                message: "添加成功",
+                type: "success",
+              });
+              this.cancel();
+              this.$emit("init");
+            }
           });
-          // 清空对话框
-          this.empty();
-          // 关闭对话框
-          this.$emit("hide");
-          // 查询管理员
-          this.$emit("init");
+        } else {
+          return false;
         }
       });
     },
     // 查看
-    look(opername, id, mobilenbr) {
-      console.log(id);
+    look(opername, loginid, mobilenbr) {
       this.isLook = true;
-      findUser({
-        id: id,
-      }).then((res) => {
-        // 获取到某条数据
-        if (res.data.isok) {
-          this.addService = res.data.data[0];
-        }
+      var svrdatas = {
+        loginid,
+        mobilenbr,
+        opername,
+      };
+      uniApi("qrySerOper", svrdatas).then((res) => {
+        this.svrdata = res.data.result;
       });
     },
     // 修改
-    update() {
-      updateUser(this.addService).then((res) => {
-        if (res.data.isok) {
-          this.$message({
-            message: res.data.info,
-            type: "success",
+    update(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          uniApi("updateSerOper", this.svrdata).then((res) => {
+            if (res.data.resultCode == -1) {
+              this.$message.error({
+                message: res.data.message,
+              });
+            }
+            if (res.data.resultCode == 1) {
+              this.$message({
+                message: "更新成功",
+                type: "success",
+              });
+              this.cancel();
+              this.$emit("init");
+            }
           });
-          // 清空对话框
-          this.empty();
-          // 通知父组件  让对话框消失
-          this.$emit("hide");
-          // 通知父组件重新查询数据
-          this.$emit("init");
+        } else {
+          return false;
         }
       });
     },
@@ -192,6 +216,8 @@ export default {
 };
 </script>
 <style scoped lang="stylus">
+.el-select
+  width 100%
 .position
   position fixed
   top 0
@@ -210,12 +236,14 @@ export default {
     background #fff
   span
     position absolute
-    top -20px
-    right 15px
+    top 10px
+    right 10px
     font-size 20px
     color #ccc
     cursor pointer
     user-select none
+    &:hover
+      color red
   .title
     text-align center
     font-size 20px

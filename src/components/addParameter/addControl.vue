@@ -16,7 +16,7 @@
         ref="svrdata"
       >
         <el-form-item label="账号 :" prop="loginid">
-          <el-input v-model="svrdata.loginid" placeholder="请输入将添加的账号"></el-input>
+          <el-input v-model="svrdata.loginid " placeholder="请输入将添加的账号"></el-input>
         </el-form-item>
         <el-form-item label="密码 :" prop="loginpwd">
           <el-input

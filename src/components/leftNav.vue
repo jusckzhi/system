@@ -15,10 +15,10 @@
           <li
             is="router-link"
             v-for=" it in item.child"
-            :key="it.nav"
-            :to="it.link"
+            :key="it.menuname"
+            :to="it.menuurl"
             activeClass="select"
-          >{{it.nav}}</li>
+          >{{it.menuname}}</li>
         </ul>
       </div>
     </div>
@@ -34,10 +34,10 @@
           <li
             is="router-link"
             v-for=" it in item.child"
-            :key="it.nav"
-            :to="it.link"
+            :key="it.menuname"
+            :to="it.menuurl"
             activeClass="select"
-          >{{it.nav}}</li>
+          >{{it.menuname}}</li>
         </ul>
       </div>
     </div>
@@ -51,144 +51,91 @@ export default {
         {
           icon: "iconfont icon-yonghu",
           title: "用户管理系统",
+          menucode: "110000",
           isOpen: false,
           arrows: "iconfont icon-sanjiaoxing arrows",
-          child: [
-            {
-              link: "userquery",
-              nav: "用户查询",
-            },
-            {
-              link: "userstatistics",
-              nav: "用户统计",
-            },
-            {
-              link: "healthfile",
-              nav: "健康档案查询",
-            },
-            {
-              link: "healthplan",
-              nav: "健康计划管理",
-            },
-            {
-              link: "healthinquiry",
-              nav: "健康咨询管理",
-            },
-          ],
+          child: [],
         },
         {
           icon: "iconfont icon-qudao",
           title: "渠道管理系统",
+          menucode: "120000",
           isOpen: false,
           arrows: "iconfont icon-sanjiaoxing arrows",
-          child: [
-            {
-              link: "channelmanager",
-              nav: "渠道信息维护",
-            },
-            {
-              link: "channeluser",
-              nav: "渠道用户统计",
-            },
-            {
-              link: "channelcommission",
-              nav: "渠道佣金结算",
-            },
-            {
-              link: "channelorder",
-              nav: "渠道订单管理",
-            },
-          ],
+          child: [],
         },
         {
           icon: "iconfont icon-zonghefuwuzhan",
           title: "服务站管理系统",
+          menucode: "130000",
           isOpen: false,
           arrows: "iconfont icon-sanjiaoxing arrows",
-          child: [
-            {
-              link: "servicefees",
-              nav: "服务站信息维护",
-            },
-            {
-              link: "serviceorder",
-              nav: "服务站用户统计",
-            },
-            {
-              link: "serviceinformation",
-              nav: "服务站佣金结算",
-            },
-            {
-              link: "ServiceUser",
-              nav: "服务站订单管理",
-            },
-          ],
+          child: [],
         },
         {
           icon: "iconfont icon-yixuekepu",
           title: "健康科普管理系统",
+          menucode: "140000",
           isOpen: false,
           arrows: "iconfont icon-sanjiaoxing arrows",
-          child: [
-            {
-              link: "maintain",
-              nav: "科普信息维护",
-            },
-            {
-              link: "analyze",
-              nav: "科普信息分析",
-            },
-          ],
+          child: [],
         },
         {
           icon: "iconfont icon-caozuo",
           title: "操作员管理系统",
+          menucode: "180000",
           isOpen: false,
           arrows: "iconfont icon-sanjiaoxing arrows",
-          child: [
-            {
-              link: "role",
-              nav: "角色管理",
-            },
-            {
-              link: "platform",
-              nav: "平台操作员管理",
-            },
-            {
-              link: "channel",
-              nav: "渠道操作员管理",
-            },
-            {
-              link: "service",
-              nav: "服务站操作员管理",
-            },
-          ],
+          child: [],
         },
         {
           icon: "iconfont icon-xitong",
           title: "系统参数管理系统",
+          menucode: "190000",
           isOpen: false,
           arrows: "iconfont icon-sanjiaoxing arrows",
-          child: [
-            {
-              link: "menus",
-              nav: "菜单管理",
-            },
-            {
-              link: "datadictionary",
-              nav: "数据字典维护",
-            },
-            {
-              link: "control",
-              nav: "控制参数维护",
-            },
-          ],
+          child: [],
         },
       ],
       shade: true,
     };
   },
   methods: {
+    // 菜单数据
+    find() {
+      var newArr1 = this.Menulist;
+      var newArr2 = [];
+      var newArr3 = [];
+      let arr = JSON.parse(sessionStorage.getItem("permissionResult"));
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].leafflag == "1") {
+          newArr2.push(arr[i]);
+        }
+        if (arr[i].leafflag == "2") {
+          newArr3.push(arr[i]);
+        }
+      }
+      for (var a = 0; a < newArr1.length; a++) {
+        for (var b = 0; b < newArr2.length; b++) {
+          if (newArr1[a].menucode == newArr2[b].parmenucode) {
+            newArr1[a].child.push(newArr2[b]);
+          }
+          newArr2[b].child = [];
+          for (var c = 0; c < newArr3.length; c++) {
+            if (newArr2[b].menucode == newArr3[c].parmenucode) {
+              newArr2[b].child.push(newArr3[c]);
+            }
+          }
+        }
+      }
+      var newArr = [];
+      for (var x = 0; x < newArr1.length; x++) {
+        if (!newArr1[x].child.length == 0) {
+          newArr.push(newArr1[x]);
+        }
+      }
+      this.Menulist = newArr;
+    },
     // 展开收起左侧菜单列表
     open(index) {
       if (this.Menulist[index].isOpen) {
@@ -214,11 +161,15 @@ export default {
       this.$emit("changeStyleClose");
     },
   },
+  mounted() {
+    this.find();
+  },
 };
 </script>
 
 <style lang="stylus">
 .con
+  user-select none
   .menus
     width 50px
     height 50px

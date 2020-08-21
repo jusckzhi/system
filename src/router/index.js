@@ -6,10 +6,12 @@ Vue.use(VueRouter);
 
 
 
-const routes = [{
-    path: "/ceshi",
-    component: () => import("../views/ceshi.vue"),
-  }, {
+const routes = [
+  // {
+  //     path: "/ceshi",
+  //     component: () => import("../components/operator/jurisdiction.vue"),
+  //   }, 
+  {
     path: "/home",
     component: Home,
     children: [

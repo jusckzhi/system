@@ -2,7 +2,7 @@
     padding: 0;
     margin: 0;
     list-style: none;
-    user-select: none;
+    /* user-select: none; */
 }
 
 input:-ms-input-placeholder {

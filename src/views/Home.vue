@@ -21,7 +21,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import leftNav from "../components/leftNav";
 import headerTitle from "../components/headerTitle";
 export default {

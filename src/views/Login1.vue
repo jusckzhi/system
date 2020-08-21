@@ -13,7 +13,7 @@
           <input
             type="text"
             placeholder="Username"
-            v-model="svrdata.loginid"
+            v-model="obj.busidata.svrdata.loginid"
             @keydown.enter="login"
           />
         </div>
@@ -22,7 +22,7 @@
           <input
             type="text"
             placeholder="phone number"
-            v-model="svrdata.mobilenbr"
+            v-model="obj.busidata.svrdata.mobilenbr"
             @keydown.enter="login"
           />
         </div>
@@ -31,7 +31,7 @@
           <input
             :type="flag==true?'password':'text'"
             placeholder="Password"
-            v-model="svrdata.loginpwd"
+            v-model="obj.busidata.svrdata.loginpwd"
             @keydown.enter="login"
           />
           <span
@@ -57,7 +57,7 @@
 </template>
 <script>
 import SIdentify from "../components/SIdentify";
-import { requestLogin } from "../util/request";
+import { api } from "../util/request";
 import Qs from "qs";
 export default {
   props: {
@@ -68,7 +68,22 @@ export default {
   },
   data: function () {
     return {
-      svrdata: { loginid: "", loginpwd: "", mobilenbr: "" },
+      obj: {
+        mobilet: "ORDERING",
+        dataType: "JSON",
+        clientver: "0.0.0",
+        version: "0",
+        protocolVer: "1.0.0",
+        screenSize: "640x960",
+        macAddress: "01-00-00-00-00-00",
+        busidata: {
+          handleSessionLost: "false",
+          timeOut: "30000",
+          service: "login",
+          token: "",
+          svrdata: { loginid: "", loginpwd: "", mobilenbr: "" },
+        },
+      },
       identifyCodes: "1234567890abcdefjhijklinopqrsduvwxyz",
       identifyCode: "",
       codes: "",
@@ -85,14 +100,14 @@ export default {
       if (this.cut == "账号") {
         this.cutFlag = true;
         this.cut = "手机号码";
-        this.svrdata.loginid = "";
-        this.svrdata.loginpwd = "";
+        this.obj.busidata.svrdata.loginid = "";
+        this.obj.busidata.svrdata.loginpwd = "";
         this.codes = "";
       } else {
         this.cutFlag = false;
         this.cut = "账号";
-        this.svrdata.mobilenbr = "";
-        this.svrdata.loginpwd = "";
+        this.obj.busidata.svrdata.mobilenbr = "";
+        this.obj.busidata.svrdata.loginpwd = "";
         this.codes = "";
       }
       this.identifyCode = "";
@@ -120,7 +135,10 @@ export default {
 
     // 登录
     login() {
-      if (this.svrdata.loginid == "" && this.svrdata.loginpwd == "") {
+      if (
+        this.obj.busidata.svrdata.loginid == "" ||
+        this.obj.busidata.svrdata.loginpwd == ""
+      ) {
         this.$message.error({
           message: "账号或密码不能为空",
           duration: 2000,
@@ -147,7 +165,9 @@ export default {
         this.loading = true;
         if (this.throttle) {
           this.throttle = false;
-          requestLogin(this.svrdata)
+          api({
+            data: this.obj,
+          })
             .then((res) => {
               console.log(res);
               this.throttle = true;
@@ -188,6 +208,14 @@ export default {
               this.loading = false;
             });
         }
+
+        //   // 登录成功
+        //   // 用来标记登录没登录
+        //   var storage = window.localStorage;
+        //   storage.setItem("isLogin", true);
+        //   storage.setItem("adminName", this.user.name);
+
+        //
       }
     },
   },

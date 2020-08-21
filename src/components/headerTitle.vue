@@ -28,11 +28,12 @@ export default {
   },
   data: function () {
     return {
-      username: localStorage.getItem("adminName"),
+      username: sessionStorage.getItem("opername"),
     };
   },
   methods: {
     out() {
+      sessionStorage.clear();
       this.$router.replace("/login");
     },
   },
@@ -45,6 +46,7 @@ export default {
   height 100%
   display flex
   justify-content space-between
+  user-select none
   .left
     width 40%
     height 100%
@@ -59,7 +61,7 @@ export default {
         width 100%
         height 100%
     p
-      color #fff
+      color #aeaeae
       font-size 18px
   .right
     width 40%
