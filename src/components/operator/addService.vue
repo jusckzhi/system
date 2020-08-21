@@ -159,7 +159,8 @@ export default {
       });
     },
     // 查看
-    look(id) {
+    look(opername, id, mobilenbr) {
+      console.log(id);
       this.isLook = true;
       findUser({
         id: id,

@@ -64,7 +64,7 @@ export default {
           timeOut: "30000",
           service: "login",
           token: "",
-          svrdata: { loginid: "999", loginpwd: "999", opercode: "999999" },
+          svrdata: { code: "2899", loginid: "111", loginpwd: "111" },
         },
       },
       svrdata: {

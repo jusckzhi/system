@@ -164,14 +164,19 @@ export default {
       this.confirmPass = "";
     },
     // 添加
-    confirm() {
-      this.isLook = false;
-      // 验证两次密码是否不一致
-
-      // 发起请求添加渠道操作员
-      addChannel(data).then((res) => {
-        if (res.data.isok) {
-          this.$message({
+    confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 输入正确可以添加管理员
+          uniApi("addChlOper", this.svrdata).then((res) => {
+            if (res.data.resultCode === -1) {
+              this.$message.error({
+                message: "手机号码已被注册",
+              });
+              this.empty();
+            }
+            if (res.data.resultCode != -1) {
+              this.$message({
             message: res.data.info,
             type: "success",
           });

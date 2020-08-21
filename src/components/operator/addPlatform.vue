@@ -168,8 +168,30 @@ export default {
     },
     // 修改
     update() {
-      updateUser(this.addPlatform).then((res) => {
-        if (res.data.isok) {
+      if (
+        this.obj.busidata.svrdata.loginid == "" ||
+        this.obj.busidata.svrdata.mobilenbr == "" ||
+        this.obj.busidata.svrdata.opername == ""
+      ) {
+        this.$message.error({
+          message: "缺少必须项",
+        });
+      }else{
+        
+      }
+      api({
+        data: {
+          busidata: {
+            handleSessionLost: "false",
+            timeOut: "30000",
+            service: "editOper",
+            token: "",
+            svrdata: this.obj.busidata.svrdata,
+          },
+        },
+      }).then((res) => {
+        console.log(res);
+        if (res.data.resultCode == 1) {
           this.$message({
             message: res.data.info,
             type: "success",
